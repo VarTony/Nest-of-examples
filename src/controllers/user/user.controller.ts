@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Patch, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from '@services/index';
 import { Response } from 'express';
 import { BuyItemDTO, UserCreateDTO } from '@dto/user';
@@ -7,6 +7,21 @@ import { BuyItemDTO, UserCreateDTO } from '@dto/user';
 export class UserController {
     constructor( private readonly service: UserService) {}
 
+    @Get()
+    async getUsers(
+      @Res() res: Response
+    ): Promise<void> {
+      const { result, status } = await this.service.getUsers();
+
+      res.send({ result, status });
+    }
+
+    /**
+     * Генерирует платежную транзакцию для заданого пользователя;
+     * 
+     * @param body 
+     * @param res
+     */
     @UsePipes(new ValidationPipe({transform: true}))
     @Patch('buyItem')
       async buyItem(
@@ -14,14 +29,20 @@ export class UserController {
        @Res() res: Response
       ): Promise<void> {
         const { id, price } = body;
-        console.log(typeof id, price);
-        const { result } = await this.service.buyItems({ id, price });
+        const { result, status } = await this.service.buyItems({ id, price });
     
-        res.send({ result });
+        res.send({ result, status });
     }
 
+
+    /**
+     * Создает тестового пользователя
+     * 
+     * @param body 
+     * @param res 
+     */
     @UsePipes(new ValidationPipe({transform: true}))
-    @Patch('createUser')
+    @Post()
       async createUser(
        @Body() body: UserCreateDTO,
        @Res() res: Response
@@ -30,6 +51,24 @@ export class UserController {
         const { result } = await this.service.createUser(balance);
     
         res.send({ result });
+    }
+
+
+    /**
+     * Удаляет тестового пользователя по id
+     * 
+     * @param id 
+     * @param res 
+     */
+    @UsePipes(new ValidationPipe({transform: true}))
+    @Delete(':id')
+      async deleteUser(
+       @Param('id', ParseIntPipe) id: number,
+       @Res() res: Response
+      ): Promise<void> {
+        const { result, status } = await this.service.deleteUser(id);
+    
+        res.send({ result, status });
     }
 
 }

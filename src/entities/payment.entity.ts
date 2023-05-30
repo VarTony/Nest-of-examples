@@ -17,6 +17,5 @@ export class Payment {
     amount: number;
 
     @CreateDateColumn()
-    // @Column({ name:, type: 'TimeStamp' })
     createdAt: Date;
 }

@@ -1,10 +1,9 @@
 import { User } from 'src/entities/user.entity';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BuyItemDTO } from 'src/dto/user';
 import { Repository, Connection } from 'typeorm';
 import { Payment } from '@entities/payment.entity';
-import { PaymentService } from '@services/index';
 
 
 @Injectable()
@@ -16,21 +15,44 @@ export class UserService {
 
 
     /**
-     *  Берет пользователя по id из базы данных.
+     * Берет пользователя по id из базы данных.
+     * 
      * @param id 
      * @returns 
      */
-    async getUser(id: number): Promise< { answer: string, user: any } > {
-        console.log('id: ', id);
+    async getUser(id: number): Promise< { result: any, status: number } > {
+        let result, status;
         try {
             const user = await this.repository.findOne({ where: { id: 1 } });
-            return { answer: 'Ok',  user };
+            result = user;
+            status = 200;
         } catch(err) { 
             console.warn(err);
-            const customer = { answer: 'Something is wrong', user: null }; 
-            return customer;
+            result = 'Something is wrong';
+            status = 400; 
         }
+        return { result, status }
     }
+
+    /**
+     * Берет всех пользователей из базы данных.
+     *
+     * @returns 
+     */
+        async getUsers(): Promise< { result: any, status: number } > {
+            let result, status;
+            try {
+                const users = await this.repository.find();
+                result = users;
+                status = 200;
+            } catch(err) { 
+                console.warn(err);
+                result = 'Something is wrong';
+                status = 400; 
+            }
+            return { result, status }
+        }
+
 
     /**
      * Создает нового пользователя с заданым балансом.
@@ -40,32 +62,52 @@ export class UserService {
      */
     async createUser(balance: number) {
     let result, status; 
-
     try {
         const user = await this.repository.create({ balance });
         await this.repository.save(user);
-        status = 'Ok';
+        status = 200;
         result = user;
-
     } catch(err) {
         console.warn(err);
         result = 'Что-то пошло не так';
-        status = 'Bad';
+        status = 400;
     }
         return { result };
     }
 
-
+    
+    /**
+     * Удаляет тестового пользователя по id
+     * 
+     * @param id 
+     * @returns 
+     */
     async deleteUser(id: number) {
-        const result = await this.repository.delete({ id });
+        let result, status;
+        try {
+            const deleted = await this.repository.delete({ id });
+            result = deleted;
+            status = 'Ok';
+        } catch(err) {
+            console.warn(err);
+            result = 'Что-то пошло не так';
+            status = 400;
+        }
         
-        return { result,  };
+        return { result, status };
     }
 
 
+    /**
+     * Обработка платежной транзакции пользователя;
+     * 
+     * @param data 
+     * @returns 
+     */
     async buyItems (data: BuyItemDTO) {
+        let result, status;
         const { id, price } = data;
-        const { user } = await this.getUser(data.id);
+        const user = (await this.getUser(data.id)).result;
 
         if(user !== null) {
             user.balance = user.balance - data.price;
@@ -84,18 +126,20 @@ export class UserService {
                 await queryRunner.manager.getRepository(Payment).save(payment);
             } catch(err) {
                 console.error(err);
-                errors.push(err);
                 await queryRunner.rollbackTransaction();
+                result = 'Транзакция не удалась, что-то пошло не так.';
+                status = 400;
             } finally {
                 await queryRunner.release();
-            }
-            
-            return { result: errors.length === 0 
-                ? 'Транзакция прошла успешно.'
-                : 'Транзакция не удалась, что-то пошло не так.'
-             }
-        } else return { result: `Пользователь не найден, id : ${ data.id }` }
-    }
-    
+                result = 'Транзакция прошла успешно.';
+                status = 200;
+            }   
+            return { result, status };
+        } else  { 
+            result = `Пользователь не найден, id : ${ data.id }`;
+            status = 400;
 
+            return { result, status };
+        }
+    }
 }
