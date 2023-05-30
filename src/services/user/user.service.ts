@@ -101,22 +101,15 @@ export class UserService {
     /**
      * Обработка платежной транзакции пользователя;
      * 
-     * @param data 
+     * @param amount 
+     * @param user 
      * @returns 
      */
-    async buyItems (data: BuyItemDTO) {
-        let result, status;
-        const { id, price } = data;
-        const user = (await this.getUser(data.id)).result;
+    private async createTransaction(amount, user) {
+        const queryRunner = this.connection.createQueryRunner(); 
+            let result, status;    
 
-        if(user !== null) {
-            user.balance = user.balance - data.price;
-
-            if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` }
-            const errors = [];
-            const paymentMap: {} = { userId: id, action: 'buy', amount: price };
-
-            const queryRunner = this.connection.createQueryRunner(); 
+            const paymentMap: {} = { userId: user.id, action: 'buy', amount };
             await queryRunner.connect();
             await queryRunner.startTransaction();
 
@@ -135,9 +128,25 @@ export class UserService {
                 status = 200;
             }   
             return { result, status };
+    } 
+
+    /**
+     * Обработка платежной транзакции пользователя;
+     * 
+     * @param data 
+     * @returns 
+     */
+    async buyItems (data: BuyItemDTO) {
+        const { id, price } = data;
+        const user = (await this.getUser(id)).result;
+
+        if(user !== null) {
+            user.balance = user.balance - data.price;
+            if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` };
+            return await this.createTransaction(price, user);
         } else  { 
-            result = `Пользователь не найден, id : ${ data.id }`;
-            status = 400;
+            const result = `Пользователь не найден, id : ${ data.id }`;
+            const status = 400;
 
             return { result, status };
         }
