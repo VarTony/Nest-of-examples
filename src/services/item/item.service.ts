@@ -11,7 +11,27 @@ export class ItemService {
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache
   ) {}
 
+  /**
+   * Кеширует данныею
+   * (Внутрений вспомогательный метод.)
+   * 
+   * @param data 
+   */
+  private async cacheData(data: any) {
+    const keys = Object.keys(data);
+    this.cacheService.set('keys', keys);
 
+    keys.forEach(key => this.cacheService.set(key, data[key])
+     .catch(err => console.log(err)));
+  }
+
+  /**
+   * Достает объекты из кеша.
+   * (Внутрений вспомогательный метод.)
+   * 
+   * @param keys 
+   * @returns 
+   */
   private async getItemsFromCache(keys: Array<string>) {
     let result, status;
     try {
@@ -25,6 +45,11 @@ export class ItemService {
     return { result, status };
   }
 
+  /**
+   * Достает данные из внешнего api
+   * 
+   * @returns 
+   */
   async getItems(): Promise<any> {
     let result,status; 
     const api: string = process.env.EXTERAL_ITEMS_API;
@@ -39,12 +64,8 @@ export class ItemService {
      .get(api)
      .toPromise()
      .then(res => res.data);
-     
-     keys = Object.keys(items);
-     this.cacheService.set('keys', keys);
-
-     keys.forEach(key => this.cacheService.set(key, items[key])
-      .catch(err => console.log(err)));
+      
+    this.cacheData(items);
 
       result = items;
       status = 200;
@@ -55,6 +76,4 @@ export class ItemService {
     }
     return { result, status };
   }
-
-
 }
