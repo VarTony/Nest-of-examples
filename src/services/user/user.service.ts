@@ -4,20 +4,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BuyItemDTO } from 'src/dto/user';
 import { Repository, Connection } from 'typeorm';
 import { Payment } from '@entities/payment.entity';
-import { PaymentService } from '..';
-// import { PaymentService } from '@services/index';
+import { PaymentService } from '@services/index';
 
 
 @Injectable()
 export class UserService {
-    @Inject(PaymentService)
-    private readonly paymentService: PaymentService;
-
     constructor(
         @InjectRepository(User) private readonly repository: Repository<User>,
         private readonly connection: Connection
     ){}
 
+
+    /**
+     *  Берет пользователя по id из базы данных.
+     * @param id 
+     * @returns 
+     */
     async getUser(id: number): Promise< { answer: string, user: any } > {
         console.log('id: ', id);
         try {
@@ -30,18 +32,34 @@ export class UserService {
         }
     }
 
-
+    /**
+     * Создает нового пользователя с заданым балансом.
+     *  Для удобства тестирования
+     * @param balance 
+     * @returns 
+     */
     async createUser(balance: number) {
-        const result = await this.repository.create({ balance });
-        const users = await this.repository.find().then(res => res)
+    let result, status; 
 
-        console.log()
-        return { result, users };
+    try {
+        const user = await this.repository.create({ balance });
+        await this.repository.save(user);
+        status = 'Ok';
+        result = user;
+
+    } catch(err) {
+        console.warn(err);
+        result = 'Что-то пошло не так';
+        status = 'Bad';
+    }
+        return { result };
     }
 
+
     async deleteUser(id: number) {
-        await this.repository.delete({ id });
-        return { result: 'ok' };
+        const result = await this.repository.delete({ id });
+        
+        return { result,  };
     }
 
 
@@ -54,7 +72,7 @@ export class UserService {
 
             if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` }
             const errors = [];
-            const payment = await this.paymentService.createPayment({ userId: id, action: 'buy', amount: price })
+            const paymentMap: {} = { userId: id, action: 'buy', amount: price };
 
             const queryRunner = this.connection.createQueryRunner(); 
             await queryRunner.connect();
@@ -62,7 +80,8 @@ export class UserService {
 
             try {
                 await queryRunner.manager.save(user);
-                await queryRunner.manager.getMongoRepository(Payment).save(payment);
+                const payment = await queryRunner.manager.getRepository(Payment).create(paymentMap)
+                await queryRunner.manager.getRepository(Payment).save(payment);
             } catch(err) {
                 console.error(err);
                 errors.push(err);

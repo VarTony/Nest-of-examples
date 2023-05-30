@@ -6,10 +6,12 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class PaymentService {
     constructor(
-        @InjectRepository(Payment) private readonly repository: Repository<Payment>,
+        // @InjectRepository(Payment) private readonly repository: Repository<Payment>,
     ){}
 
-    async createPayment(data: any): Promise<Payment[]> {
-        return await this.repository.create(data);
-    }
+    // async createPayment(data: any): Promise<Payment[]> {
+    //     return await this.repository.create(data);
+    // }
+
+    async createPayment(data: any): Promise<any> {}
 }

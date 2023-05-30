@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity('payments')
@@ -13,9 +13,10 @@ export class Payment {
     @Column({ name: 'action', type: 'varchar' })
     action: 'buy' | 'sell';
 
-    @Column({name: 'amount', type: 'numeric' })
+    @Column({ name: 'amount', type: 'numeric' })
     amount: number;
 
-    // @Column({name: 'ts', type: '?' })
-    // ts: any;
+    @CreateDateColumn()
+    // @Column({ name:, type: 'TimeStamp' })
+    createdAt: Date;
 }

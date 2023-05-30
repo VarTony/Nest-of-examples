@@ -27,9 +27,9 @@ export class UserController {
        @Res() res: Response
       ): Promise<void> {
         const { balance } = body;
-        const { result, users } = await this.service.createUser(balance);
+        const { result } = await this.service.createUser(balance);
     
-        res.send({ result, users });
+        res.send({ result });
     }
 
 }
