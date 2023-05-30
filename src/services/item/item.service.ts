@@ -12,40 +12,48 @@ export class ItemService {
   ) {}
 
 
-  async getItemsFromCache(keys: Array<string>) {
-    let result;
+  private async getItemsFromCache(keys: Array<string>) {
+    let result, status;
     try {
-      result = await Promise.all(keys.map(async key =>  (await this.cacheService.get(key))))
+      result = await Promise.all(keys.map(async key =>  (await this.cacheService.get(key))));
+      status = 200;
     } catch(err) {
       console.error(err);
-      result = 'Somethimg is wrong';
+      result = 'Что-то пошло не так';
+      status = 400;
     }
-    return { result };
+    return { result, status };
   }
 
-  async getAllItems(): Promise<any> {
+  async getItems(): Promise<any> {
+    let result,status; 
     const api: string = process.env.EXTERAL_ITEMS_API;
-    console.log(api);
     
     let keys: any = await this.cacheService.get('keys')
         .catch(err => console.error(err));
 
-    if(keys) return await this.getItemsFromCache(keys);
+    if(keys) return (await this.getItemsFromCache(keys));
 
-    console.log(1111);
+    try {
     const items = await this.httpService
      .get(api)
      .toPromise()
-     .then(res => res.data)
-     .catch(err => console.error(err));
+     .then(res => res.data);
+     
+     keys = Object.keys(items);
+     this.cacheService.set('keys', keys);
 
-        keys = Object.keys(items);
-        this.cacheService.set('keys', keys);
+     keys.forEach(key => this.cacheService.set(key, items[key])
+      .catch(err => console.log(err)));
 
-        keys.forEach(key => {
-            this.cacheService.set(key, items[key]).catch(err => console.log(err));
-        });
-        return { result: items };
+      result = items;
+      status = 200;
+    } catch(err) {
+      console.warn(err);
+      result = 'Что-то пошло не так';
+      status = 400;
+    }
+    return { result, status };
   }
 
 

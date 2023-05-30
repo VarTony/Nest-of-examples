@@ -7,14 +7,14 @@ export class ItemController {
 
   constructor( private readonly service: ItemService) {}
 
-  @Get('getAll')
-    async checkExternalAPI(
+  @Get()
+    async getItems(
      @Body() body: { api: string },
      @Res() res: Response
     ): Promise<void> {
       const api: string = body.api;
-      const { result } = await this.service.getAllItems();
+      const { result, status } = await this.service.getItems();
   
-      res.send({ result });
+      res.send({ result, status });
     }
 }
