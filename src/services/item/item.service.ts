@@ -2,6 +2,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER  } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { config } from 'dotenv';
+// config();
 
 @Injectable()
 export class ItemService {
@@ -52,7 +54,7 @@ export class ItemService {
    */
   async getItems(): Promise<any> {
     let result,status; 
-    const api: string = process.env.EXTERAL_ITEMS_API;
+    const api: string = process.env.EXTERAL_API;
     
     let keys: any = await this.cacheService.get('keys')
         .catch(err => console.error(err));
