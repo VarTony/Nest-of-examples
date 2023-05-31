@@ -72,7 +72,7 @@ export class UserService {
         result = 'Что-то пошло не так';
         status = 400;
     }
-        return { result };
+        return { result, status };
     }
 
     
@@ -99,7 +99,8 @@ export class UserService {
 
 
     /**
-     * Обработка платежной транзакции пользователя;
+     * Обработка платежной транзакции пользователя
+     * (Внутрений вспомогательный метод.)
      * 
      * @param amount 
      * @param user 
@@ -131,24 +132,26 @@ export class UserService {
     } 
 
     /**
-     * Обработка платежной транзакции пользователя;
+     * Обработка платежа ;
      * 
      * @param data 
      * @returns 
      */
-    async buyItems (data: BuyItemDTO) {
+    async buyItems (data: BuyItemDTO): Promise<any> {
+        let result, status;
         const { id, price } = data;
         const user = (await this.getUser(id)).result;
 
         if(user !== null) {
             user.balance = user.balance - data.price;
             if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` };
-            return await this.createTransaction(price, user);
+            result = await this.createTransaction(price, user);
+            status = 200;
         } else  { 
-            const result = `Пользователь не найден, id : ${ data.id }`;
-            const status = 400;
-
-            return { result, status };
+            result = `Пользователь не найден, id : ${ data.id }`;
+            status = 400;
         }
+
+        return { result, status };
     }
 }
