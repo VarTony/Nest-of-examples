@@ -23,7 +23,7 @@ export class UserService {
     async getUser(id: number): Promise< { result: any, status: number } > {
         let result, status;
         try {
-            const user = await this.repository.findOne({ where: { id: 1 } });
+            const user = await this.repository.findOne({ where: { id } });
             result = user;
             status = 200;
         } catch(err) { 
@@ -93,7 +93,6 @@ export class UserService {
             result = 'Что-то пошло не так';
             status = 400;
         }
-        
         return { result, status };
     }
 
@@ -130,6 +129,7 @@ export class UserService {
             }   
             return { result, status };
     } 
+
 
     /**
      * Обработка платежа ;
