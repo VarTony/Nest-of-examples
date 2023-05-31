@@ -1,5 +1,4 @@
-import { Transform } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsNumberString, Min, isPositive } from "class-validator";
+import { IsNotEmpty, IsNumber, Min } from "class-validator";
 
 export class BuyItemDTO { 
     @IsNotEmpty()

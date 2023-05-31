@@ -2,8 +2,6 @@ import { Injectable, Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER  } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { config } from 'dotenv';
-// config();
 
 @Injectable()
 export class ItemService {
