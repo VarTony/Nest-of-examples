@@ -28,7 +28,7 @@ export class UserService {
             status = 200;
         } catch(err) { 
             console.warn(err);
-            result = 'Something is wrong';
+            result = 'Что-то пошло не так';
             status = 400; 
         }
         return { result, status }
@@ -47,7 +47,7 @@ export class UserService {
                 status = 200;
             } catch(err) { 
                 console.warn(err);
-                result = 'Something is wrong';
+                result = 'Что-то пошло не так';
                 status = 400; 
             }
             return { result, status }
