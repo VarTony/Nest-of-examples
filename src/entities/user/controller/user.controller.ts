@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
-import { UserService } from '@services/index';
+import { UserService } from 'src/oldStructure/services/index';
 import { Response } from 'express';
-import { BuyItemDTO, UserCreateDTO } from '@dto/user';
+import { BuyItemDTO, UserCreateDTO } from 'src/oldStructure/dto/user';
 
 @Controller('user')
 export class UserController {

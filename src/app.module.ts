@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { UserController, ItemController } from '@controllers/index';
-import { UserService, ItemService, PaymentService } from '@services/index' 
-import { User, Payment } from '@entities/index';
-import { DbConnection, RedisModule } from '@modules/index';
+import { User, Payment } from 'src/oldStructure/repositories/index';
+import { DbConnection, RedisModule } from '@entities/connections/index';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ItemModule } from '@item/module/item.module';
 const path = require('path');
 
 
@@ -21,9 +20,8 @@ const path = require('path');
     TypeOrmModule.forFeature([ User, Payment ]),
     HttpModule,
     DbConnection,
-    RedisModule
-  ],
-  controllers: [ ItemController, UserController ],
-  providers: [ ItemService, PaymentService, UserService ]
+    RedisModule,
+    ItemModule
+  ]
 })
 export class AppModule {}

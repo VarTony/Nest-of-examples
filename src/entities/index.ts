@@ -1,4 +1,3 @@
-import { Payment } from "./payment.entity";
-import { User } from "./user.entity";
-
-export { Payment, User };
+import { ItemModule } from '@item/index';
+// import { UserModule } from '@user/index';
+// import { PaymentModule } from '@payment/index';

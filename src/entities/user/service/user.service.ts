@@ -1,9 +1,9 @@
-import { User } from 'src/entities/user.entity';
+import { User } from '@entities/user/repository/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BuyItemDTO } from 'src/dto/user';
+import { BuyItemDTO } from 'src/oldStructure/dto/user';
 import { Repository, Connection } from 'typeorm';
-import { Payment } from '@entities/payment.entity';
+import { Payment } from '@entities/payment/repository/payment.entity';
 
 
 @Injectable()
