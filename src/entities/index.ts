@@ -1,5 +1,5 @@
 import { ItemModule } from '@item/index';
 import { UserModule } from '@user/index';
-// import { PaymentModule } from '@payment/index';
+import { PaymentModule } from '@payment/index';
 
-export { ItemModule, UserModule };
+export { ItemModule, PaymentModule, UserModule };
