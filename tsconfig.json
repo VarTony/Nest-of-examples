@@ -18,11 +18,11 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@user/*": ["src/entities/user/*"],
-      "@payment/*": [ "src/entities/payment/*" ],
-      "@item/*": ["src/entities/item/*"],
-      "@entities/*": ["src/entities/*"],
-      "@connections/*" : ["src/entities/connections/*" ]
+      "@user/*":         ["src/entities/user/*"],
+      "@payment/*":      [ "src/entities/payment/*" ],
+      "@item/*":         ["src/entities/item/*"],
+      "@entities/*":     ["src/entities/*"],
+      "@connections/*" : ["src/connections/*" ]
     },
   }
 }
