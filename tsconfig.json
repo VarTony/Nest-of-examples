@@ -18,11 +18,11 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@controllers/*": ["src/controllers/*"],
-      "@dto/*": [ "src/dto/*" ],
-      "@services/*": ["src/services/*"],
+      "@user/*": ["src/entities/user/*"],
+      "@payment/*": [ "src/entities/payment/*" ],
+      "@item/*": ["src/entities/item/*"],
       "@entities/*": ["src/entities/*"],
-      "@modules/*" : ["src/modules/*" ]
+      "@connections/*" : ["src/entities/connections/*" ]
     },
   }
 }
