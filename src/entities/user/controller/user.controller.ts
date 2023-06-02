@@ -1,7 +1,19 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
-import { UserService } from 'src/oldStructure/services/index';
+import { 
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Res,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common';
+import { UserService } from '../service/user.service';
 import { Response } from 'express';
-import { BuyItemDTO, UserCreateDTO } from 'src/oldStructure/dto/user';
+import { BuyItemDTO, UserCreateDTO } from '../dto';
 
 @Controller('user')
 export class UserController {
