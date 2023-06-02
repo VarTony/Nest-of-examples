@@ -1,4 +1,4 @@
-import { Payment } from '@entities/payment/repository/payment.entity';
+import { Payment } from '../repository/payment.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
