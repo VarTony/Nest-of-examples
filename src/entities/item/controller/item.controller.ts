@@ -11,8 +11,8 @@ export class ItemController {
     async getItems(
      @Res() res: Response
     ): Promise<void> {
-      const { result, status } = await this.service.getItems();
+      const { result } = await this.service.getItems();
   
-      res.send({ result, status });
+      res.send({ result });
     }
 }

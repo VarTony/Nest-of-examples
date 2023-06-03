@@ -32,17 +32,15 @@ export class ItemService {
    * @param keys 
    * @returns 
    */
-  private async getItemsFromCache(keys: Array<string>) {
-    let result, status;
+  private async getItemsFromCache(keys: Array<string>): Promise< { result } > {
+    let result;
     try {
       result = await Promise.all(keys.map(async key =>  (await this.cacheService.get(key))));
-      status = 200;
     } catch(err) {
       console.error(err);
       result = 'Что-то пошло не так';
-      status = 400;
     }
-    return { result, status };
+    return { result };
   }
 
   /**
@@ -51,29 +49,24 @@ export class ItemService {
    * @returns 
    */
   async getItems(): Promise<any> {
-    let result,status; 
+    let result; 
     const api: string = process.env.EXTERAL_API;
-    
     let keys: any = await this.cacheService.get('keys')
         .catch(err => console.error(err));
 
     if(keys) return (await this.getItemsFromCache(keys));
 
     try {
-    const items = await this.httpService
-     .get(api)
-     .toPromise()
-     .then(res => res.data);
-      
-    this.cacheData(items);
-
+      const items = await this.httpService
+       .get(api)
+       .toPromise()
+       .then(res => res.data); 
+      this.cacheData(items);
       result = items;
-      status = 200;
     } catch(err) {
       console.warn(err);
       result = 'Что-то пошло не так';
-      status = 400;
     }
-    return { result, status };
+    return { result };
   }
 }

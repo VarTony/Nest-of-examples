@@ -20,85 +20,78 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    async getUser(id: number): Promise< { result: any, status: number } > {
-        let result, status;
+    async getUser(id: number): Promise< { result: any } > {
+        let result;
         try {
             const user = await this.repository.findOne({ where: { id } });
             result = user;
-            status = 200;
         } catch(err) { 
             console.warn(err);
             result = 'Что-то пошло не так';
-            status = 400; 
         }
-        return { result, status }
+        return { result }
     }
+
 
     /**
      * Берет всех пользователей из базы данных.
      *
      * @returns 
      */
-        async getUsers(): Promise< { result: any, status: number } > {
-            let result, status;
-            try {
-                const users = await this.repository.find();
-                result = users;
-                status = 200;
-            } catch(err) { 
-                console.warn(err);
-                result = 'Что-то пошло не так';
-                status = 400; 
-            }
-            return { result, status }
+    async getUsers(): Promise< { result: any } > {
+        let result;
+        try {
+            const users = await this.repository.find();
+            result = users;
+        } catch(err) { 
+            console.warn(err);
+            result = 'Что-то пошло не так';
         }
+        return { result }
+    }
 
 
     /**
      * Создает нового пользователя с заданым балансом.
-     *  Для удобства тестирования
+     *  Для удобства тестирования.
      * @param balance 
      * @returns 
      */
-    async createUser(balance: number) {
-    let result, status; 
+    async createUser(balance: number): Promise<{ result }> {
+    let result;
     try {
         const user = await this.repository.create({ balance });
         await this.repository.save(user);
-        status = 200;
         result = user;
     } catch(err) {
         console.warn(err);
         result = 'Что-то пошло не так';
-        status = 400;
     }
-        return { result, status };
+        return { result };
     }
 
     
     /**
-     * Удаляет тестового пользователя по id
+     * Удаляет тестового пользователя по id.
      * 
      * @param id 
      * @returns 
      */
     async deleteUser(id: number) {
-        let result, status;
+        let result;
         try {
             const deleted = await this.repository.delete({ id });
             result = deleted;
-            status = 'Ok';
         } catch(err) {
             console.warn(err);
             result = 'Что-то пошло не так';
-            status = 400;
         }
-        return { result, status };
+        return { result };
     }
 
 
     /**
-     * Обработка платежной транзакции пользователя
+     * Обработка платежной транзакции пользователя.
      * (Внутрений вспомогательный метод.)
      * 
      * @param amount 
@@ -107,38 +100,37 @@ export class UserService {
      */
     private async createTransaction(amount, user) {
         const queryRunner = this.connection.createQueryRunner(); 
-            let result, status;    
+        let result, status;    
 
-            const paymentMap: {} = { userId: user.id, action: 'buy', amount };
-            await queryRunner.connect();
-            await queryRunner.startTransaction();
+        const paymentMap: {} = { userId: user.id, action: 'buy', amount };
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-            try {
-                await queryRunner.manager.save(user);
-                const payment = await queryRunner.manager.getRepository(Payment).create(paymentMap)
-                await queryRunner.manager.getRepository(Payment).save(payment);
-            } catch(err) {
-                console.error(err);
-                await queryRunner.rollbackTransaction();
-                result = 'Транзакция не удалась, что-то пошло не так.';
-                status = 400;
-            } finally {
-                await queryRunner.release();
-                result = 'Транзакция прошла успешно.';
-                status = 200;
-            }   
+        try {
+            await queryRunner.manager.save(user);
+            const payment = await queryRunner.manager.getRepository(Payment).create(paymentMap)
+            await queryRunner.manager.getRepository(Payment).save(payment);
+            await queryRunner.commitTransaction();
+        } catch(err) {
+            console.error(err);
+            await queryRunner.rollbackTransaction();
+            result = 'Транзакция не удалась, что-то пошло не так.';
+        } finally {
+            await queryRunner.release();
+            result = 'Транзакция прошла успешно.';
+        }   
             return { result, status };
     } 
 
 
     /**
-     * Обработка платежа ;
+     * Обработка платежа.
      * 
      * @param data 
      * @returns 
      */
-    async buyItems (data: BuyItemDTO): Promise<any> {
-        let result, status;
+    async buyItems (data: BuyItemDTO): Promise<{ result }> {
+        let result;
         const { id, price } = data;
         const user = (await this.getUser(id)).result;
 
@@ -146,12 +138,8 @@ export class UserService {
             user.balance = user.balance - data.price;
             if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` };
             result = await this.createTransaction(price, user);
-            status = 200;
-        } else  { 
-            result = `Пользователь не найден, id : ${ data.id }`;
-            status = 400;
-        }
+        } else result = `Пользователь не найден, id : ${ data.id }`;
 
-        return { result, status };
+        return { result };
     }
 }

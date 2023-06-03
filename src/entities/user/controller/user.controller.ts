@@ -23,9 +23,9 @@ export class UserController {
     async getUsers(
       @Res() res: Response
     ): Promise<void> {
-      const { result, status } = await this.service.getUsers();
+      const { result } = await this.service.getUsers();
 
-      res.send({ result, status });
+      res.send({ result });
     }
 
     /**
@@ -41,9 +41,9 @@ export class UserController {
        @Res() res: Response
       ): Promise<void> {
         const { id, price } = body;
-        const { result, status } = await this.service.buyItems({ id, price });
+        const { result } = await this.service.buyItems({ id, price });
     
-        res.send({ result, status });
+        res.send({ result });
     }
 
 
@@ -78,9 +78,9 @@ export class UserController {
        @Param('id', ParseIntPipe) id: number,
        @Res() res: Response
       ): Promise<void> {
-        const { result, status } = await this.service.deleteUser(id);
+        const { result } = await this.service.deleteUser(id);
     
-        res.send({ result, status });
+        res.send({ result });
     }
 
 }
