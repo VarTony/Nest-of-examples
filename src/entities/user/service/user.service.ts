@@ -1,7 +1,7 @@
 import { User } from '../repository/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BuyItemDTO } from '@user/dto/user.buyItem.dto';
+import { BuyItemDTO } from '@user/dto';
 import { Repository, Connection } from 'typeorm';
 import { Payment } from '@payment/index';
 

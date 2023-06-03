@@ -12,5 +12,4 @@ export class PaymentService {
     async createPayment(data: any): Promise<Payment[]> {
         return await this.repository.create(data);
     }
-
 }
