@@ -10,3 +10,4 @@ export class User {
     @Column({name: 'balance', type: 'numeric' })
     balance: number;
 }
+
