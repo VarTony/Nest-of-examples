@@ -1,11 +1,17 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Payment } from "@payment/index";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "./role.entity";
 
 @Entity('user')
 export class User {
-    // @OneToMany(_ => Payment, payment => payment.userId)
     @PrimaryGeneratedColumn()
     id: number;
+
+    @ManyToOne(_ => Role, role => role.id)
+    @Column({ name: 'role_id', type: 'numeric' })
+    roleId: number;
+
+    @Column({ name: 'active', type: 'boolean' })
+    active: boolean;
     
     @Column({ name: 'email', type: 'varchar' })
     email: string;
@@ -18,5 +24,8 @@ export class User {
 
     @Column({name: 'balance', type: 'numeric' })
     balance: number;
+
+    @CreateDateColumn()
+    createdA: Date;
 }
 

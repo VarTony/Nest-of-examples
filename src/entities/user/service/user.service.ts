@@ -3,7 +3,8 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BuyItemDTO } from '@user/dto';
 import { Repository } from 'typeorm';
-import { Payment, PaymentService } from '@payment/index';
+import { PaymentService } from '@payment/index';
+import * as crypto from 'node:crypto';
 
 
 @Injectable()
@@ -54,14 +55,31 @@ export class UserService {
 
     /**
      * Создает нового пользователя с заданым балансом.
-     *  Для удобства тестирования.
+     * 
      * @param balance 
      * @returns 
      */
-    async createUser(balance: number): Promise<{ result }> {
+    async createUser(userData: any): Promise<{ result }> {
     let result;
+    const { email, balance, password } = userData;
     try {
-        const user = await this.repository.create({ balance });
+        const salt = await crypto.createHash('sha256')
+            .update(Date.now().toString() + Math.random().toString())
+            .digest('hex')
+        
+        const passhash = await crypto.createHash('sha512')
+            .update(`${ password }.${ salt }`)
+            .digest('hex');
+
+        const user = await this.repository.create({ 
+            balance,
+            email: email,
+            password: passhash,
+            salt,
+            roleId: 3,
+            active: true
+        });
+
         await this.repository.save(user);
         result = user;
     } catch(err) {
@@ -73,7 +91,7 @@ export class UserService {
 
     
     /**
-     * Удаляет тестового пользователя по id.
+     * Деактивирует тестового пользователя по id.
      * 
      * @param id 
      * @returns 
@@ -82,9 +100,10 @@ export class UserService {
         let result;
         try {
             const user = await this.repository.findOne({ where: { id } })
-            const payments = await this.paymentService.findTransactionsByUserId(user);
-            console.log(payments);
-            await this.repository.delete({ id });
+            // const payments = await this.paymentService.findTransactionsByUserId(user);
+            // console.log(payments);
+            // await this.repository.delete({ id });
+            // await this.repository.update({ })
             result = `Пользователь с id:${ id } был успешно удален.`;
         } catch(err) {
             console.warn(err);
