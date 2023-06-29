@@ -18,6 +18,12 @@ import { UserCreateDTO } from '../dto';
 export class UserController {
     constructor( private readonly service: UserService) {}
 
+
+    /**
+     * Достает всех созданных пользователей.
+     *  
+     * @param res 
+     */
     @Get()
     async getUsers(
       @Res() res: Response
@@ -29,7 +35,7 @@ export class UserController {
 
 
     /**
-     * Создает тестового пользователя
+     * Создает тестового пользователя.
      * 
      * @param body 
      * @param res 
@@ -48,7 +54,7 @@ export class UserController {
 
 
     /**
-     * Удаляет тестового пользователя по id
+     * Удаляет тестового пользователя по id.
      * 
      * @param id 
      * @param res 
