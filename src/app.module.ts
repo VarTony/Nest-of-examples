@@ -2,10 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { DbConnection, RedisModule } from '@connections/index';
-import { UserModule, ItemModule, PaymentModule } from '@entities/index';
-import { TransactionModule } from '@transaction/index';
-import { NewsModule } from '@news/index';
-import { AuthModule } from './entities/auth/module/auth.module';
+import { 
+  UserModule,
+  ItemModule,
+  PaymentModule,
+  TransactionModule,
+  NewsModule,
+  AuthModule
+} from '@entities/index';
 const path = require('path');
 
 
