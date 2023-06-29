@@ -65,7 +65,7 @@ export class UserService {
     try {
         const salt = await crypto.createHash('sha256')
             .update(Date.now().toString() + Math.random().toString())
-            .digest('hex')
+            .digest('hex');
         
         const passhash = await crypto.createHash('sha512')
             .update(`${ password }.${ salt }`)
@@ -91,7 +91,7 @@ export class UserService {
 
     
     /**
-     * Деактивирует тестового пользователя по id.
+     * Деактивирует пользователя по id.
      * 
      * @param id 
      * @returns 
@@ -99,11 +99,9 @@ export class UserService {
     async deleteUser(id: number) {
         let result;
         try {
-            const user = await this.repository.findOne({ where: { id } })
-            // const payments = await this.paymentService.findTransactionsByUserId(user);
-            // console.log(payments);
-            // await this.repository.delete({ id });
-            // await this.repository.update({ })
+            const user = await this.repository.findOne({ where: { id } });
+            user.active = false;
+            await this.repository.save(user);
             result = `Пользователь с id:${ id } был успешно удален.`;
         } catch(err) {
             console.warn(err);
