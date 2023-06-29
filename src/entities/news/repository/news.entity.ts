@@ -14,9 +14,6 @@ export class News {
     @Column({ name: 'body', type: 'varchar' })
     body: string;
 
-    // @Column({ name: 'imgs', type: 'array', nullable: true })
-    // imgs: string[];
-
     @ManyToMany(_ => User, user => user.id)
     @Column({ name: 'created_by', type: 'numeric' })
     createdBy: number;
