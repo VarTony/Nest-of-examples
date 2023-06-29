@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { DbConnection, RedisModule } from '@connections/index';
 import { UserModule, ItemModule, PaymentModule } from '@entities/index';
+import { TransactionModule, TransactionService } from '@transaction/index';
 const path = require('path');
 
 
@@ -20,7 +21,9 @@ const path = require('path');
     RedisModule,
     ItemModule,
     UserModule,
-    PaymentModule
-  ]
+    PaymentModule,
+    TransactionModule
+  ],
+  providers: [TransactionService]
 })
 export class AppModule {}

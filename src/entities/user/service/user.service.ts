@@ -1,16 +1,17 @@
 import { User } from '../repository/user.entity';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BuyItemDTO } from '@user/dto';
-import { Repository, Connection } from 'typeorm';
-import { Payment } from '@payment/index';
+import { Repository } from 'typeorm';
+import { Payment, PaymentService } from '@payment/index';
 
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User) private readonly repository: Repository<User>,
-        private readonly connection: Connection
+        @Inject(PaymentService)
+        private readonly paymentService: PaymentService
     ){}
 
 
@@ -80,66 +81,13 @@ export class UserService {
     async deleteUser(id: number) {
         let result;
         try {
-            const deleted = await this.repository.delete({ id });
-            result = deleted;
+            await this.paymentService;
+            await this.repository.delete({ id });
+            result = `Пользователь с id:${ id } был успешно удален.`;
         } catch(err) {
             console.warn(err);
             result = 'Что-то пошло не так';
         }
-        return { result };
-    }
-
-
-    /**
-     * Обработка платежной транзакции пользователя.
-     * (Внутрений вспомогательный метод.)
-     * 
-     * @param amount 
-     * @param user 
-     * @returns 
-     */
-    private async createTransaction(amount, user) {
-        const queryRunner = this.connection.createQueryRunner(); 
-        let result, status;    
-
-        const paymentMap: {} = { userId: user.id, action: 'buy', amount };
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-
-        try {
-            await queryRunner.manager.save(user);
-            const payment = await queryRunner.manager.getRepository(Payment).create(paymentMap)
-            await queryRunner.manager.getRepository(Payment).save(payment);
-            await queryRunner.commitTransaction();
-        } catch(err) {
-            console.error(err);
-            await queryRunner.rollbackTransaction();
-            result = 'Транзакция не удалась, что-то пошло не так.';
-        } finally {
-            await queryRunner.release();
-            result = 'Транзакция прошла успешно.';
-        }   
-            return { result, status };
-    } 
-
-
-    /**
-     * Обработка платежа.
-     * 
-     * @param data 
-     * @returns 
-     */
-    async buyItems (data: BuyItemDTO): Promise<{ result }> {
-        let result;
-        const { id, price } = data;
-        const user = (await this.getUser(id)).result;
-
-        if(user !== null) {
-            user.balance = user.balance - data.price;
-            if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` };
-            result = await this.createTransaction(price, user);
-        } else result = `Пользователь не найден, id : ${ data.id }`;
-
         return { result };
     }
 }

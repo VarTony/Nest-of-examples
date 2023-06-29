@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Res,
   UsePipes,
@@ -13,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { Response } from 'express';
-import { BuyItemDTO, UserCreateDTO } from '../dto';
+import { UserCreateDTO } from '../dto';
 
 @Controller('user')
 export class UserController {
@@ -26,24 +25,6 @@ export class UserController {
       const { result } = await this.service.getUsers();
 
       res.send({ result });
-    }
-
-    /**
-     * Генерирует платежную транзакцию для заданого пользователя;
-     * 
-     * @param body 
-     * @param res
-     */
-    @UsePipes(new ValidationPipe({transform: true}))
-    @Patch('buyItem')
-      async buyItem(
-       @Body() body: BuyItemDTO,
-       @Res() res: Response
-      ): Promise<void> {
-        const { id, price } = body;
-        const { result } = await this.service.buyItems({ id, price });
-    
-        res.send({ result });
     }
 
 

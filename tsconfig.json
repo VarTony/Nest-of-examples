@@ -21,6 +21,7 @@
       "@user/*":         ["src/entities/user/*"],
       "@payment/*":      [ "src/entities/payment/*" ],
       "@item/*":         ["src/entities/item/*"],
+      "@transaction/*":  ["src/entities/transaction/*"],
       "@entities/*":     ["src/entities/*"],
       "@connections/*" : ["src/connections/*" ]
     },
