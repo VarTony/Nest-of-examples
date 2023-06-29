@@ -39,7 +39,7 @@ export class UserService {
      *
      * @returns 
      */
-    async getUsers(): Promise< { result: any } > {
+    async getUsers(): Promise< { result: User } > {
         let result;
         try {
             const users = await this.repository.find();
@@ -81,7 +81,9 @@ export class UserService {
     async deleteUser(id: number) {
         let result;
         try {
-            await this.paymentService;
+            const user = await this.repository.findOne({ where: { id } })
+            const payments = await this.paymentService.findTransactionsByUserId(user);
+            console.log(payments);
             await this.repository.delete({ id });
             result = `Пользователь с id:${ id } был успешно удален.`;
         } catch(err) {

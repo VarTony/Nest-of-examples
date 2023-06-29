@@ -9,8 +9,8 @@ import { TransactionService } from '@transaction/index';
 
 
 @Module({
-    imports: [ HttpModule, TypeOrmModule.forFeature([ User, Payment ]) ], // Payment
+    imports: [ HttpModule, TypeOrmModule.forFeature([ User, Payment ]) ],
     controllers: [ ItemController ],
-    providers: [ ItemService, UserService, TransactionService, PaymentService ]  //PaymentService
+    providers: [ ItemService, UserService, TransactionService, PaymentService ]
 })
 export class ItemModule {}
