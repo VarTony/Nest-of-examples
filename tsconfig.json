@@ -22,6 +22,7 @@
       "@payment/*":      [ "src/entities/payment/*" ],
       "@item/*":         ["src/entities/item/*"],
       "@transaction/*":  ["src/entities/transaction/*"],
+      "@news/*":         ["src/entities/news/*"],
       "@entities/*":     ["src/entities/*"],
       "@connections/*" : ["src/connections/*" ]
     },

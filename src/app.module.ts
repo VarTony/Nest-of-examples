@@ -3,9 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { DbConnection, RedisModule } from '@connections/index';
 import { UserModule, ItemModule, PaymentModule } from '@entities/index';
-import { TransactionModule, TransactionService } from '@transaction/index';
-import { NewsService } from './entities/news/service/news.service';
-import { NewsModule } from './entities/news/module/news.module';
+import { TransactionModule } from '@transaction/index';
+import { NewsModule } from '@news/index';
 const path = require('path');
 
 
