@@ -4,6 +4,8 @@ import { HttpModule } from '@nestjs/axios';
 import { DbConnection, RedisModule } from '@connections/index';
 import { UserModule, ItemModule, PaymentModule } from '@entities/index';
 import { TransactionModule, TransactionService } from '@transaction/index';
+import { NewsService } from './entities/news/service/news.service';
+import { NewsModule } from './entities/news/module/news.module';
 const path = require('path');
 
 
@@ -22,8 +24,8 @@ const path = require('path');
     ItemModule,
     UserModule,
     PaymentModule,
-    TransactionModule
-  ],
-  providers: [TransactionService]
+    TransactionModule,
+    NewsModule
+  ]
 })
 export class AppModule {}
