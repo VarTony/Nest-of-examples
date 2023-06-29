@@ -5,6 +5,7 @@ import { DbConnection, RedisModule } from '@connections/index';
 import { UserModule, ItemModule, PaymentModule } from '@entities/index';
 import { TransactionModule } from '@transaction/index';
 import { NewsModule } from '@news/index';
+import { AuthModule } from './entities/auth/module/auth.module';
 const path = require('path');
 
 
@@ -24,7 +25,8 @@ const path = require('path');
     UserModule,
     PaymentModule,
     TransactionModule,
-    NewsModule
+    NewsModule,
+    AuthModule
   ]
 })
 export class AppModule {}

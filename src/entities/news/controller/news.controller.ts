@@ -37,6 +37,13 @@ export class NewsController {
         res.send({ result });
     }
 
+
+    /**
+     * Обновляет данные в новостной записи.
+     * 
+     * @param body 
+     * @param res 
+     */
     @Patch()
     async updateNews(
         @Body() body: any,

@@ -23,6 +23,7 @@
       "@item/*":         ["src/entities/item/*"],
       "@transaction/*":  ["src/entities/transaction/*"],
       "@news/*":         ["src/entities/news/*"],
+      "@auth/*":         ["src/entities/auth/*"],
       "@entities/*":     ["src/entities/*"],
       "@connections/*" : ["src/connections/*" ]
     },
