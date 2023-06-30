@@ -13,7 +13,10 @@ export class User {
     @Column({ name: 'active', type: 'boolean' })
     active: boolean;
     
-    @Column({ name: 'email', type: 'varchar' })
+    @Column({ name: 'login', type: 'varchar', length: 25 })
+    login: string;
+
+    @Column({ name: 'email', type: 'varchar', length: 50 })
     email: string;
 
     @Column({ name: 'password', type: 'varchar' })

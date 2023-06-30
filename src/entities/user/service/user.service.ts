@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { PaymentService } from '@payment/index';
 import * as crypto from 'node:crypto';
 
-
 @Injectable()
 export class UserService {
     constructor(
@@ -22,10 +21,12 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    async getUser(id: number): Promise< { result: any } > {
+    async getUser(data: any): Promise< { result: any } > {
         let result;
+        const { head, ...tail } = { ...data }.values() ; 
         try {
-            const user = await this.repository.findOne({ where: { id } });
+
+            const user = await this.repository.findOne({ where: {  } });
             result = user;
         } catch(err) { 
             console.warn(err);
