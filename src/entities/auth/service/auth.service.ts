@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserService } from '@user/index';
+import { User } from '@user/index';
 import * as crypto from 'node:crypto';
 import { Repository } from 'typeorm';
 import { logUserData, passData } from '../types';
@@ -9,8 +9,7 @@ import { logUserData, passData } from '../types';
 @Injectable()
 export class AuthService {
     constructor(
-        @Inject(UserService)
-        @InjectRepository(User) private readonly userRepo: Repository<User>,
+        @InjectRepository(User) private readonly userRepo: Repository<User>, // ВРЕМЕННОЕ РЕШЕНИЕ
         private readonly jwtService: JwtService
     ) {}
 
@@ -65,7 +64,7 @@ export class AuthService {
 
 
     /**
-     * Внутрений метод для проверки паролей.
+     * Внутрений метод проверки паролей.
      * 
      * @param usersInfo 
      * @returns 

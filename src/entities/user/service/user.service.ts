@@ -1,17 +1,13 @@
 import { User } from '../repository/user.entity';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BuyItemDTO } from '@user/dto';
 import { Repository } from 'typeorm';
-import { PaymentService } from '@payment/index';
 import * as crypto from 'node:crypto';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User) private readonly repository: Repository<User>,
-        @Inject(PaymentService)
-        private readonly paymentService: PaymentService
     ){}
 
 

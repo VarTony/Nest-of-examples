@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, Min, ValidateIf } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Length, ValidateIf } from "class-validator";
 
 class AuthUserDTO {
     @IsString()
@@ -10,8 +10,9 @@ class AuthUserDTO {
     @IsEmail()
     email?: string;
 
+    @IsNotEmpty()
     @IsString()
-    @Length(7, 15)
+    @Length(7, 25)
     password: string;
 }
 

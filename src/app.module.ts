@@ -10,6 +10,8 @@ import {
   NewsModule,
   AuthModule
 } from '@entities/index';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtSecret } from '@auth/constants';
 const path = require('path');
 
 
@@ -21,6 +23,11 @@ const path = require('path');
         path.join(__dirname, '../config/develop.env') 
     ],
       isGlobal: true
+    }),
+    JwtModule.register({
+      global: true,
+      secret: jwtSecret,
+      signOptions: { expiresIn: '180s' }
     }),
     HttpModule,
     DbConnection,

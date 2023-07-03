@@ -47,7 +47,7 @@ export class NewsService {
 
 
     /**
-     * Обналает данные новостной записи.
+     * Обновляет данные новостной записи.
      * 
      * @param newsUpdate 
      * @returns 
