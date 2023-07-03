@@ -21,12 +21,10 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    async getUser(data: any): Promise< { result: any } > {
+    async getUser(id: number): Promise< { result: any } > {
         let result;
-        const { head, ...tail } = { ...data }.values() ; 
         try {
-
-            const user = await this.repository.findOne({ where: {  } });
+            const user = await this.repository.findOne({ where: { id } });
             result = user;
         } catch(err) { 
             console.warn(err);
@@ -75,7 +73,7 @@ export class UserService {
         const user = await this.repository.create({ 
             balance,
             email: email,
-            password: passhash,
+            passhash,
             salt,
             roleId: 3,
             active: true

@@ -6,6 +6,6 @@ import { Payment, PaymentService } from '@payment/index';
 
 @Module({
     imports: [ TypeOrmModule.forFeature([ User, Payment ]) ],
-    providers: [ UserService, AuthService, PaymentService ]
+    providers: [ AuthService ]
 })
 export class AuthModule {}

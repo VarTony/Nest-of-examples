@@ -1,20 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User, UserService } from '@user/index';
 import * as crypto from 'node:crypto';
-import { access } from 'node:fs';
-
-type userInfo = {
-    id?: number, 
-    login?: string, 
-    email?: string,
-    password: string
-} 
+import { Repository } from 'typeorm';
+import { logUserData, passData } from '../types';
 
 @Injectable()
 export class AuthService {
     constructor(
         @Inject(UserService)
-        private readonly userService: UserService
+        @InjectRepository(User) private readonly userRepo: Repository<User>,
+        private readonly jwtService: JwtService
     ) {}
 
 
@@ -24,13 +21,45 @@ export class AuthService {
      * @param usersInfo  
      * @returns 
      */
-    async singIn(usersInfo: userInfo): Promise<any | string> {
+    async singIn(logUserData: logUserData, password: string): Promise<any | string> {
         let result;
-        const { access, msg } = await this._passChecker(usersInfo);
+        try {
+            const user = await this._getUserByAuthData(logUserData);
+            const { salt, roleId, passhash } = user;
+            const isCorrectPass = await this._passChecker({ password, salt, passhash });
         
-        if(access) result = 1;
-        else result = msg ? msg : 'Неверный логин или пароль';
+            if(isCorrectPass) {
+                const payload = { 
+                    exp: (Date.now() + 180000),
+                    roles: roleId,
+                    iss: 'auth service'
+                }
+                result = await this.jwtService.signAsync(payload);
+            }
+            else result = 'Неверный логин или пароль';
+        } catch(err) {
+            console.warn(err);
+            result = 'Аутентификация: ';
+        }
+        return result;
+    }
 
+
+    /*
+     * Находит пользователя по логину или емейлу.
+     * 
+     * @param authData 
+     */
+    private async _getUserByAuthData(logUserData: logUserData): Promise<User|null> {
+        let result;
+        try {
+            const user = await this.userRepo.findOne({ where: { ...logUserData } });
+            result = user;
+        } catch(err) {
+            console.warn(err);
+            err.reason = 'Внутреняя ошибка при поиске пользователя для аутентификации';
+            result = null;
+        }
         return result;
     }
 
@@ -41,21 +70,18 @@ export class AuthService {
      * @param usersInfo 
      * @returns 
      */
-    async _passChecker(usersInfo: userInfo): Promise<{ access: boolean | null, msg: string | null }> {
+    private async _passChecker(passData: passData): Promise<boolean|null> {
         let result;
         try{
-            const user = (await this.userService.getUser(usersInfo)).result;
             const passhash = await crypto.createHash('sha512')
-             .update(`${ usersInfo.password }.${ user.salt }`)
+             .update(`${ passData.password }.${ passData.salt }`)
              .digest('hex');
 
-             result = { access: passhash === user.password, msg: null };
+             result = passhash === passData.passhash;
         } catch(err) {
             console.warn(err);
-            result = { 
-                access: null,
-                msg: 'Не удалось авторизировать пользователя по внутреним причиным' 
-            }
+            err.reason = 'Аутентификация: внутреняя ошибка при проверке пароля';
+            result = null;
         }
         return result;
     }

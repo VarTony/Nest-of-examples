@@ -15,7 +15,7 @@ import { BuyItemDTO } from '@user/dto';
 @Controller('item')
 export class ItemController {
 
-  constructor( private readonly service: ItemService) {}
+  constructor(private readonly service: ItemService) {}
 
   /**
    * Отдает все товары;
@@ -38,7 +38,7 @@ export class ItemController {
      * @param body 
      * @param res
      */
-      @UsePipes(new ValidationPipe({transform: true}))
+      @UsePipes(new ValidationPipe({ transform: true }))
       @Patch('buy')
       async buyItem(
        @Body() body: BuyItemDTO,
