@@ -7,8 +7,14 @@ import { AuthUserDTO } from '@auth/DTOs';
 export class AuthController {
     constructor(private readonly service: AuthService) {}
 
+    /**
+     * Аутентификация пользователя
+     * 
+     * @param body 
+     * @param res 
+     */
     @UsePipes(new ValidationPipe({ transform: true }))
-    @Post()
+    @Post('singIn')
     async singInUser(
         @Body() body: AuthUserDTO,
         @Res() res: Response

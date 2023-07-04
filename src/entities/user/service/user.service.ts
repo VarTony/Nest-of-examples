@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'node:crypto';
+import { userRegisterData } from '@user/types';
 
 @Injectable()
 export class UserService {
@@ -49,42 +50,84 @@ export class UserService {
 
 
     /**
+     * Формирует структуру для хранения пароля в бд
+     * 
+     * @param password 
+     * @returns 
+     */
+    private async _createPasshash(password: string): Promise<{ salt: string, passhash: string }> {
+        const salt = await crypto.createHash('sha256')
+        .update(Date.now().toString() + Math.random().toString())
+        .digest('hex');
+    
+        const passhash = await crypto.createHash('sha512')
+            .update(`${ password }.${ salt }`)
+            .digest('hex');
+
+        return { passhash, salt };
+    }
+
+
+    /**
+     * Предикат существования пользователя с указанным емейлом или логином
+     * 
+     * @param login 
+     * @param email 
+     * @returns 
+     */
+    private async _isUserExist(login: string, email: string): Promise<boolean> {
+        let result;
+        try {
+            const user = await this.repository.findOne({ where: { login, email } });
+            result = Boolean(user); 
+        } catch(err) {
+            console.warn(err);
+            result = 'Произошла ошибка при проверки логина и емайла на уникальность'
+            err.reason = result;
+        }
+        console.log(result);
+        return result;
+    }
+
+
+    /**
      * Создает нового пользователя с заданым балансом.
      * 
      * @param balance 
      * @returns 
      */
-    async createUser(userData: any): Promise<{ result }> {
-    let result;
-    const { email, balance, password } = userData;
+    async createUser(userData: userRegisterData): Promise<{ result: string, status: boolean }> {
+    let result, status;
+    const { login, email, balance, password } = userData;
     try {
-        const salt = await crypto.createHash('sha256')
-            .update(Date.now().toString() + Math.random().toString())
-            .digest('hex');
-        
-        const passhash = await crypto.createHash('sha512')
-            .update(`${ password }.${ salt }`)
-            .digest('hex');
-
+        if(await this._isUserExist(login, email)) {
+            result = 'Пользователь с таким логином или емейлом уже существует';
+            status = false;
+            
+            return { result, status };
+        }
+        const { passhash, salt } = await this._createPasshash(password);
         const user = await this.repository.create({ 
             balance,
-            email: email,
+            login,
+            email,
             passhash,
             salt,
             roleId: 3,
             active: true
         });
-
         await this.repository.save(user);
-        result = user;
+        result = `Пользователь ${ login } был успешно создан`;
+        status = true;
     } catch(err) {
         console.warn(err);
-        result = 'Что-то пошло не так';
+        result = err.reason ?? 'Что-то пошло не так';
+        status = false;
     }
-        return { result };
+     return { result, status };
     }
-
     
+
     /**
      * Деактивирует пользователя по id.
      * 

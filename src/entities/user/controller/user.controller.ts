@@ -14,9 +14,12 @@ import { UserService } from '../service/user.service';
 import { Response } from 'express';
 import { UserCreateDTO } from '../dto';
 
+
 @Controller('user')
 export class UserController {
-    constructor( private readonly service: UserService) {}
+    constructor(
+      private readonly service: UserService
+      ) {}
 
 
     /**
@@ -46,10 +49,11 @@ export class UserController {
        @Body() body: UserCreateDTO,
        @Res() res: Response
       ): Promise<void> {
-        const { balance } = body;
-        const { result } = await this.service.createUser(balance);
-    
-        res.send({ result });
+        const { login, password } = body;
+        const { result, status } = await this.service.createUser(body);
+        status 
+          ? res.send({login, password}).redirect('auth/singIn')    // { login, password }
+          : res.send({ result });
     }
 
 
@@ -69,5 +73,4 @@ export class UserController {
     
         res.send({ result });
     }
-
 }
