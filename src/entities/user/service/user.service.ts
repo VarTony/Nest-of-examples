@@ -78,7 +78,7 @@ export class UserService {
     private async _isUserExist(login: string, email: string): Promise<boolean> {
         let result;
         try {
-            const user = await this.repository.findOne({ where: { login, email } });
+            const user = await this.repository.findOne({ where: [ { login }, { email } ]});
             result = Boolean(user); 
         } catch(err) {
             console.warn(err);
@@ -103,7 +103,7 @@ export class UserService {
         if(await this._isUserExist(login, email)) {
             result = 'Пользователь с таким логином или емейлом уже существует';
             status = false;
-            
+
             return { result, status };
         }
         const { passhash, salt } = await this._createPasshash(password);
