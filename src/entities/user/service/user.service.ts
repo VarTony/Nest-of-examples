@@ -18,7 +18,7 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    async getUser(id: number): Promise< { result: any } > {
+    async getById(id: number): Promise< { result: any } > {
         let result;
         try {
             const user = await this.repository.findOne({ where: { id } });
@@ -36,7 +36,7 @@ export class UserService {
      *
      * @returns 
      */
-    async getUsers(): Promise< { result: User } > {
+    async getAll(): Promise< { result: User } > {
         let result;
         try {
             const users = await this.repository.find();
@@ -96,7 +96,7 @@ export class UserService {
      * @param balance 
      * @returns 
      */
-    async createUser(userData: userRegisterData): Promise<{ result: string, status: boolean }> {
+    async create(userData: userRegisterData): Promise<{ result: string, status: boolean }> {
     let result, status;
     const { login, email, balance, password } = userData;
     try {
@@ -134,7 +134,7 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    async deleteUser(id: number) {
+    async delete(id: number) {
         let result;
         try {
             const user = await this.repository.findOne({ where: { id } });

@@ -21,7 +21,6 @@ export class UserController {
       private readonly service: UserService
       ) {}
 
-
     /**
      * Достает всех созданных пользователей.
      *  
@@ -31,7 +30,7 @@ export class UserController {
     async getUsers(
       @Res() res: Response
     ): Promise<void> {
-      const { result } = await this.service.getUsers();
+      const { result } = await this.service.getAll();
 
       res.send({ result });
     }
@@ -50,7 +49,7 @@ export class UserController {
        @Res() res: Response
       ): Promise<void> {
         const { login, password } = body;
-        const { result, status } = await this.service.createUser(body);
+        const { result, status } = await this.service.create(body);
         status 
           ? res.send({login, password}).redirect('auth/singIn')    // { login, password }
           : res.send({ result });
@@ -69,7 +68,7 @@ export class UserController {
        @Param('id', ParseIntPipe) id: number,
        @Res() res: Response
       ): Promise<void> {
-        const { result } = await this.service.deleteUser(id);
+        const { result } = await this.service.delete(id);
     
         res.send({ result });
     }

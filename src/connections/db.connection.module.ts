@@ -13,7 +13,7 @@ const path = require('path');
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASS,
             entities: [ path.join(__dirname, "../entities/**/*.entity{.ts,.js}") ],
-            synchronize: true
+            synchronize: Boolean(process.env.POSTGRES_SYNCHRONIZE)
         })
     ]
 })
