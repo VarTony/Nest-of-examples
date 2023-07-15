@@ -92,7 +92,7 @@ export class ItemService {
     async buyItems (data: BuyItemDTO): Promise<{ result }> {
         let result;
         const { id, price } = data;
-        const user = (await this.user.getUser(id)).result;
+        const user = (await this.user.getById(id)).result;
 
         if(user !== null) {
             user.balance = user.balance - data.price;

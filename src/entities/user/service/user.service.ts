@@ -9,7 +9,7 @@ import { userRegisterData } from '@user/types';
 export class UserService {
     constructor(
         @InjectRepository(User) private readonly repository: Repository<User>,
-    ){}
+    ) {}
 
 
     /**
@@ -36,7 +36,7 @@ export class UserService {
      *
      * @returns 
      */
-    async getAll(): Promise< { result: User } > {
+    async getAll(): Promise< { result: User[] | string } > {
         let result;
         try {
             const users = await this.repository.find();
