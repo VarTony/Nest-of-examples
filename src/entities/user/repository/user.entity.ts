@@ -3,11 +3,11 @@ import { Role } from "./role.entity";
 
 @Entity('user')
 export class User {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @ManyToOne(_ => Role, role => role.id)
-    @Column({ name: 'role_id', type: 'numeric' })
+    @Column({ name: 'role_id', type: 'varchar' })
     roleId: number;
 
     @Column({ name: 'active', type: 'boolean' })

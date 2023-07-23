@@ -2,10 +2,10 @@ import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, Pri
 import { User } from "../../user/repository/user.entity";
 
 
-@Entity('role')
+@Entity('news')
 export class News {
     @OneToMany(_ => User, user => user.roleId)
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column({ name: 'header', type: 'varchar', length: 100 })

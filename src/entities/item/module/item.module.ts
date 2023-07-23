@@ -5,6 +5,7 @@ import { User, UserService } from '@user/index';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Payment, PaymentService } from '@payment/index';
 import { TransactionService } from '@transaction/index';
+import { Role } from '@user/repository/role.entity';
 
 
 

@@ -8,7 +8,7 @@ import { userRegisterData } from '@user/types';
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User) private readonly repository: Repository<User>,
+        @InjectRepository(User) private readonly repository: Repository<User>
     ) {}
 
 
@@ -38,6 +38,7 @@ export class UserService {
      */
     async getAll(): Promise< { result: User[] | string } > {
         let result;
+
         try {
             const users = await this.repository.find();
             result = users;
@@ -113,7 +114,7 @@ export class UserService {
             email,
             passhash,
             salt,
-            roleId: 3,
+            roleId: 3, //'747a8b0f-9c01-4c02-a8b9-69f20f439c7a'
             active: true
         });
         await this.repository.save(user);
