@@ -9,8 +9,8 @@ export class Role {
     id: number;
 
     @Column({ name: 'role', type: 'varchar', unique: true })
-    role: 'admin' | 'user' | 'moderator' | 'test';
+    role: 'ADMIN' | 'USER' | 'MODERATOR' | 'TEST';
 
-    @Column({ name: 'rank', type: 'numeric', unique: true })
+    @Column({ name: 'rank', type: 'int', unique: true })
     rank: 1 | 2 | 3;
 }
