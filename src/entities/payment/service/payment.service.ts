@@ -1,4 +1,4 @@
-import { Payment } from '../repository/payment.entity';
+import { Payment } from '../repository/payment.repository';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,15 +12,22 @@ export class PaymentService {
         @InjectRepository(Payment) private readonly repository: Repository<Payment>,
     ){}
 
-    async createPayment(data: paymentData): Promise<Payment[]> {
-        return await this.repository.create(data);
+    async createPayment(data: paymentData): Promise<{ result: Payment | string }> {
+        let result;
+        try {
+            result = await this.repository.create(data);
+        } catch(err) {
+            console.warn(err);
+            result = 'Не удалось сохранить платеж';
+        }
+        return { result };
     }
 
+    
     async findTransactionsByUserId(user: User) {
         let result;
         try {
           result = await this.repository.find( { where: { userId: user.id } })
-        //   result.forEach(payment => { this.repository.delete(payment.id) })
         } catch(err) {
             console.warn(err);
             result = 'Не удалось найти транзакции указанного пользователя';

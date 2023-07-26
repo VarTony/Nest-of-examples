@@ -1,3 +1,3 @@
-import { paymentData } from "./service.type";
+import { paymentData, } from "./services.types";
 
 export { paymentData };

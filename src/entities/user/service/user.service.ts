@@ -1,9 +1,9 @@
-import { User } from '../repository/user.entity';
+import { User } from '../repository';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as crypto from 'node:crypto';
-import { userRegisterData } from '@user/types';
+import { createPasshashAndSalt, formaterPublicUserData } from '../constants';
+import { UserRegisterData, PublicUserData } from '../types';
 
 @Injectable()
 export class UserService {
@@ -11,18 +11,17 @@ export class UserService {
         @InjectRepository(User) private readonly repository: Repository<User>
     ) {}
 
-
     /**
-     * Берет пользователя по id из базы данных.
+     * Достает пользователя по id из базы данных.
      * 
      * @param id 
      * @returns 
      */
-    async getById(id: number): Promise< { result: any } > {
+    async getById(id: number): Promise<{ result: PublicUserData | string }> {
         let result;
         try {
             const user = await this.repository.findOne({ where: { id } });
-            result = user;
+            result = formaterPublicUserData([user])[0];
         } catch(err) { 
             console.warn(err);
             result = 'Что-то пошло не так';
@@ -32,40 +31,20 @@ export class UserService {
 
 
     /**
-     * Берет всех пользователей из базы данных.
+     * Достает всех пользователей из базы данных.
      *
      * @returns 
      */
-    async getAll(): Promise< { result: User[] | string } > {
+    async getAll(): Promise<{ result: PublicUserData[] | string }> {
         let result;
-
         try {
             const users = await this.repository.find();
-            result = users;
+            result = formaterPublicUserData(users);
         } catch(err) { 
             console.warn(err);
             result = 'Что-то пошло не так';
         }
         return { result }
-    }
-
-
-    /**
-     * Формирует структуру для хранения пароля в бд
-     * 
-     * @param password 
-     * @returns 
-     */
-    private async _createPasshash(password: string): Promise<{ salt: string, passhash: string }> {
-        const salt = await crypto.createHash('sha256')
-        .update(Date.now().toString() + Math.random().toString())
-        .digest('hex');
-    
-        const passhash = await crypto.createHash('sha512')
-            .update(`${ password }.${ salt }`)
-            .digest('hex');
-
-        return { passhash, salt };
     }
 
 
@@ -86,18 +65,17 @@ export class UserService {
             result = 'Произошла ошибка при проверки логина и емайла на уникальность'
             err.reason = result;
         }
-        console.log(result);
         return result;
     }
 
 
     /**
-     * Создает нового пользователя с заданым балансом.
+     * Создает нового пользователя с заданным балансом.
      * 
      * @param balance 
      * @returns 
      */
-    async create(userData: userRegisterData): Promise<{ result: string, status: boolean }> {
+    async create(userData: UserRegisterData): Promise<{ result: string, status: boolean }> {
     let result, status;
     const { login, email, balance, password } = userData;
     try {
@@ -107,14 +85,14 @@ export class UserService {
 
             return { result, status };
         }
-        const { passhash, salt } = await this._createPasshash(password);
+        const { passhash, salt } = await createPasshashAndSalt(password);
         const user = await this.repository.create({ 
             balance,
             login,
             email,
             passhash,
             salt,
-            roleId: 3, //'747a8b0f-9c01-4c02-a8b9-69f20f439c7a'
+            roleId: 3,
             active: true
         });
         await this.repository.save(user);
@@ -135,7 +113,7 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    async delete(id: number) {
+    async delete(id: number): Promise<{ result: string }> {
         let result;
         try {
             const user = await this.repository.findOne({ where: { id } });

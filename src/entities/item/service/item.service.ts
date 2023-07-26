@@ -7,16 +7,15 @@ import { Payment, PaymentService } from '@payment/index';
 import { BuyItemDTO } from '@user/dto';
 import { User, UserService } from '@user/index';
 import { TransactionService } from '@transaction/index';
+import { PublicUserData } from '@user/types';
 
 @Injectable()
 export class ItemService {
   
   constructor(
     private readonly httpService: HttpService,
-    // private readonly connection: Connection,
     private readonly user: UserService,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
-    // @Inject(PaymentService) private readonly paymentService: PaymentService
     @Inject( TransactionService ) private readonly transactionService: TransactionService
   ) {}
 
@@ -92,10 +91,10 @@ export class ItemService {
     async buyItems (data: BuyItemDTO): Promise<{ result }> {
         let result;
         const { id, price } = data;
-        const user = (await this.user.getById(id)).result;
+        const user = (await this.user.getById(id)).result as PublicUserData;
 
         if(user !== null) {
-            user.balance = user.balance - data.price;
+            user.balance = +user.balance - data.price;
             if(user.balance < 0) return { result: ` Недостачно средств: ${ user.balance }` };
             result = await this.transactionService.createPaymentTransaction(price, user);
         } else result = `Пользователь не найден, id : ${ data.id }`;

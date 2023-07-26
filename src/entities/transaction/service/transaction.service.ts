@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { User } from '@user/index';
 import { Payment } from '@payment/index';
+import { paymentData } from '@payment/types';
+import { PublicUserData } from '@user/types';
 
 @Injectable()
 export class TransactionService {
@@ -19,19 +21,18 @@ export class TransactionService {
      * @param user 
      * @returns 
      */    
-    async createPaymentTransaction(amount: number, user: User) {
+    async createPaymentTransaction(amount: number, user: PublicUserData) {
             const queryRunner = this.connection.createQueryRunner(); 
             let result, status;    
-        
-            type paymentData = {userId: number, action: 'buy' | 'sell', amount: number };
                 
             const paymentMap: paymentData = { userId: user.id, action: 'buy', amount };
             await queryRunner.connect();
             await queryRunner.startTransaction();
         
             try {
-                await queryRunner.manager.save(user);
+                await queryRunner.manager.getRepository(User).update( { id: user.id }, { balance: user.balance});
                 const payment = await queryRunner.manager.getRepository(Payment).create(paymentMap)
+
                 await queryRunner.manager.getRepository(Payment).save(payment);
                 await queryRunner.commitTransaction();
             } catch(err) {
@@ -43,5 +44,5 @@ export class TransactionService {
                     result = 'Транзакция прошла успешно.';
                 }   
                     return { result, status };
-            } 
+    } 
 }

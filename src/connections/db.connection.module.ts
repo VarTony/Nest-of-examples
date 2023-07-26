@@ -12,7 +12,7 @@ const path = require('path');
             database: process.env.POSTGRES_DB,
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASS,
-            entities: [ path.join(__dirname, "../entities/**/*.entity{.ts,.js}") ],
+            entities: [ path.join(__dirname, "../entities/**/*.repository{.ts,.js}") ],
             migrations: [ path.join(__dirname, 'dist/migrations/*{.ts,.js}') ],
             migrationsTableName: process.env.TYPEORM_MIGRATIONS_TABLE_NAME,
             synchronize: true

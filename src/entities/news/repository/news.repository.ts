@@ -1,5 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../../user/repository/user.entity";
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../../user/repository/user.repository";
 
 
 @Entity('news')

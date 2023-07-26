@@ -1,12 +1,12 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "@user/index";
 
-@Entity('payments')
+@Entity('payment')
 export class Payment {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(_ => User, user => user.id)
+    @ManyToMany(_ => User, user => user.id)
     @Column({ name: 'user_id', type: 'int' })
     userId: number;
 

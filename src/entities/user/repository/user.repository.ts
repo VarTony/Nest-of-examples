@@ -1,8 +1,10 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Role } from "./role.entity";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "./role.repository";
+import { Payment } from "@payment/index";
 
 @Entity('user')
 export class User {
+    @ManyToMany(_ => Payment, payment => payment.userId)
     @PrimaryGeneratedColumn('increment')
     id: number;
 
